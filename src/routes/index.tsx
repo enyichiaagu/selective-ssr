@@ -1,12 +1,32 @@
-import { createFileRoute } from '@tanstack/react-router'
-export const Route = createFileRoute('/')({
-  component: Home,
-})
+import { createFileRoute } from "@tanstack/react-router";
+import { fetchNotes } from "~/utils/notes";
 
-function Home() {
-  return (
-    <div className="p-2">
-      <h3>Welcome Home!!!</h3>
-    </div>
-  )
+export const Route = createFileRoute("/")({
+	component: RouteComponent,
+	ssr: "data-only",
+	loader: async () => fetchNotes(),
+});
+
+function RouteComponent() {
+	const notes = Route.useLoaderData();
+
+	return (
+		<div className='max-w-2xl mx-auto p-4'>
+			{!notes.length ? (
+				<p className='text-gray-500'>No notes</p>
+			) : (
+				<ul className='space-y-4'>
+					{notes.map((n) => (
+						<li key={n.id} className='border p-3 rounded shadow-sm'>
+							<h2 className='font-semibold'>{n.title}</h2>
+							<p className='text-sm text-gray-600'>{n.note}</p>
+							<p className='mt-2 text-xs text-gray-400'>
+								Created: {new Date(n.created).toLocaleString()}
+							</p>
+						</li>
+					))}
+				</ul>
+			)}
+		</div>
+	);
 }
