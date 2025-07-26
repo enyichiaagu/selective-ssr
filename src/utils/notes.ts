@@ -10,26 +10,43 @@ export interface Note {
 
 const notes: Note[] = [];
 
+export const fetchNoteById = createServerFn()
+	.validator((noteId: number) => noteId)
+	.handler(({ data }) => {
+		const storedNote = notes[data - 1];
+		return storedNote || notFound();
+	});
+
 export const fetchNotes = createServerFn().handler(async () => {
 	const reversedNotes = [...notes].reverse();
 	return reversedNotes;
 });
 
-export const addNote = createServerFn({
+export const updateNote = createServerFn({
 	method: "POST",
 	response: "data",
 })
 	.validator((note) => {
 		if (!(note instanceof FormData)) throw new Error("Invalid form data");
+		let noteId = note.get("noteId");
 		let title = note.get("title");
 		let noteText = note.get("note");
 
 		if (!title || !noteText)
 			throw new Error("Note must have title and content");
-		return { title: title.toString(), note: noteText.toString() };
+		return {
+			id: noteId ? Number(noteId) : undefined,
+			title: title.toString(),
+			note: noteText.toString(),
+		};
 	})
-	.handler(async ({ data: { title, note } }) => {
-		const inputNote: Note = {
+	.handler(({ data: { title, note, id } }) => {
+		if (id) {
+			let storedNote = notes[id - 1];
+			notes[id - 1] = { ...storedNote, ...{ title, note } };
+			return notes[id - 1];
+		}
+		let inputNote: Note = {
 			id: notes.length + 1,
 			title,
 			note,

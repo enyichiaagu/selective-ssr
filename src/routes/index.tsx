@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { fetchNotes } from "~/utils/notes";
 
 export const Route = createFileRoute("/")({
@@ -17,12 +17,21 @@ function RouteComponent() {
 			) : (
 				<ul className='space-y-4'>
 					{notes.map((n) => (
-						<li key={n.id} className='border p-3 rounded shadow-sm'>
-							<h2 className='font-semibold'>{n.title}</h2>
-							<p className='text-sm text-gray-600'>{n.note}</p>
-							<p className='mt-2 text-xs text-gray-400'>
-								Created: {new Date(n.created).toLocaleString()}
-							</p>
+						<li key={n.id}>
+							<Link
+								to='/notes/$noteId'
+								params={{ noteId: n.id }}
+								className='border p-3 block rounded shadow-sm bg-white hover:shadow-md'
+							>
+								<h2 className='font-semibold'>{n.title}</h2>
+								<p className='text-sm text-gray-600'>
+									{n.note}
+								</p>
+								<p className='mt-2 text-xs text-gray-400'>
+									Created:{" "}
+									{new Date(n.created).toLocaleString()}
+								</p>
+							</Link>
 						</li>
 					))}
 				</ul>
