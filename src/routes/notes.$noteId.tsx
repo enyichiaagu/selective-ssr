@@ -48,7 +48,6 @@ function RouteComponent() {
 
 	useEffect(() => {
 		setFormValues(fetchedNote);
-		console.log(fetchedNote);
 	}, [fetchedNote]);
 
 	const handleInputChange = (

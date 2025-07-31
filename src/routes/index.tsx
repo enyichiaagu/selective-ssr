@@ -2,12 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { fetchNotes } from "~/utils/notes";
 
 export const Route = createFileRoute("/")({
-	component: RouteComponent,
+	component: NotesComponent,
 	ssr: "data-only",
-	loader: async () => fetchNotes(),
+	loader: () => fetchNotes(),
 });
 
-function RouteComponent() {
+function NotesComponent() {
 	const notes = Route.useLoaderData();
 
 	return (

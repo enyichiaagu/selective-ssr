@@ -14,10 +14,11 @@ export const fetchNoteById = createServerFn()
 	.validator((noteId: number) => noteId)
 	.handler(({ data }) => {
 		const storedNote = notes[data - 1];
-		return storedNote || notFound();
+		if (storedNote) return storedNote;
+		throw notFound();
 	});
 
-export const fetchNotes = createServerFn().handler(async () => {
+export const fetchNotes = createServerFn().handler(() => {
 	const reversedNotes = [...notes].reverse();
 	return reversedNotes;
 });
